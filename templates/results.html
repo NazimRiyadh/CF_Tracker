@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CF Problem Tracker - {{ handle }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='results.css') }}">
+    
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>
+                    <i class="fas fa-chart-line"></i>
+                    CF Problem Tracker
+                </h1>
+                <div class="user-badge">
+                   <button onclick="window.location.href='{{ url_for('profile', handle=handle) }}'">Go to Profile</button>
+                    <i class="fas fa-user"></i> {{ handle }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-header">
+                <i class="fas fa-filter"></i>
+                Filter Problems
+            </div>
+
+            <form method="POST" action="{{ url_for('filter_problems') }}">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>Min Rating</label>
+                        <input type="number" name="filter_min_rating" class="form-control" placeholder="e.g., 1200"
+                            value="{{ request.form.filter_min_rating or '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Max Rating</label>
+                        <input type="number" name="filter_max_rating" class="form-control" placeholder="e.g., 1800"
+                            value="{{ request.form.filter_max_rating or '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select name="filter_status" class="form-control">
+                            <option value="" {% if filter_status=='' %}selected{% endif %}>All Problems</option>
+                            <option value="unsolved" {% if filter_status=='unsolved' %}selected{% endif %}>Unsolved Only
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Marked to Revise</label>
+                        <select name="filter_revise" class="form-control">
+                            <option value="" {% if filter_revise=='' %}selected{% endif %}>All</option>
+                            <option value="yes" {% if filter_revise=='yes' %}selected{% endif %}>Yes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Filter by Tags</label>
+                    <div class="tags-grid">
+                        {% set all_tags = ['implementation', 'math', 'greedy', 'dp', 'data structures', 'graphs',
+                        'strings',
+                        'constructive algorithms', 'binary search', 'trees', 'sortings'] %}
+                        {% for tag in all_tags %}
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" name="filter_tags" value="{{ tag }}" id="tag_{{ loop.index }}" {% if
+                                filter_tags and tag in filter_tags %}checked{% endif %}>
+                            <label for="tag_{{ loop.index }}">{{ tag }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <input type="hidden" name="handle" value="{{ handle }}">
+
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-search"></i>
+                    Apply Filters
+                </button>
+            </form>
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-section">
+            <div class="table-header">
+                <div class="table-title">
+                    <i class="fas fa-table"></i>
+                    Problems Overview
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('submit_notes') }}">
+                <input type="hidden" name="handle" value="{{ handle }}">
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Problem Name</th>
+                                <th>Rating</th>
+                                <th>Status</th>
+                                <th>Tags</th>
+                                <th>Notes</th>
+                                <th>Revise</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pid, info in problems.items() %}
+                            <tr>
+                                <td>
+                                    <code
+                                        style="background: rgb(248 250 252); padding: 2px 6px; border-radius: 4px; font-size: 11px;">
+                                        {{ pid }}
+                                    </code>
+                                </td>
+                                <td>
+                                    <a href="{{ info.link }}" target="_blank" class="problem-link">
+                                        {{ info.name }}
+                                        <i class="fas fa-external-link-alt" style="font-size: 10px; opacity: 0.6;"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if info.rating != 'N/A' and info.rating is not none %}
+                                    {% set r = info.rating|int %}
+                                    {% if r < 1200 %} <span class="rating-badge rating-newbie">{{ info.rating }}</span>
+                                        {% elif r < 1400 %} <span class="rating-badge rating-pupil">{{ info.rating
+                                            }}</span>
+                                            {% elif r < 1600 %} <span class="rating-badge rating-specialist">{{
+                                                info.rating }}</span>
+                                                {% elif r < 1900 %} <span class="rating-badge rating-expert">{{
+                                                    info.rating }}</span>
+                                                    {% elif r < 2100 %} <span class="rating-badge rating-candidate">{{
+                                                        info.rating }}</span>
+                                                        {% else %}
+                                                        <span class="rating-badge rating-master">{{ info.rating
+                                                            }}</span>
+                                                        {% endif %}
+                                                        {% else %}
+                                                        <span class="rating-badge rating-newbie">-</span>
+                                                        {% endif %}
+                                </td>
+                                <td>
+                                    {% if info.status == 'OK' %}
+                                    <span class="status-badge status-solved">
+                                        <i class="fas fa-check"></i> Solved
+                                    </span>
+                                    {% else %}
+                                    <span class="status-badge status-unsolved">
+                                        <i class="fas fa-times"></i> Unsolved
+                                    </span>
+                                    {% endif %}
+
+                                </td>
+                                <td>
+                                    <div class="tags-container">
+                                            {% for tag in info.tags if tag %}
+                                        <span class="tag">{{ tag }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <textarea name="note_{{ pid }}" class="note-textarea" rows="2"
+                                        placeholder="Add your notes...">{{ info.note }}</textarea>
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="revise_{{ pid }}" class="revise-checkbox" {% if
+                                        info.revise %}checked{% endif %}>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="actions-section">
+                    <div class="action-links">
+                        <a href="{{ url_for('revise_list') }}" class="action-link">
+                            <i class="fas fa-bookmark"></i>
+                            Revise List
+                        </a>
+                        <a href="{{ url_for('download_csv', handle=handle) }}" class="action-link">
+                            <i class="fas fa-download"></i>
+                            Download CSV
+                        </a>
+                        <a href="{{ url_for('index') }}" class="action-link">
+                            <i class="fas fa-search"></i>
+                            Search Another User
+                        </a>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Notes & Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Add loading state to forms
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function () {
+                this.classList.add('loading');
+                const submitBtn = this.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    submitBtn.disabled = true;
+                }
+            });
+        });
+
+        // Auto-resize textareas
+        document.querySelectorAll('.note-textarea').forEach(textarea => {
+            textarea.addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        });
+    </script>
+</body>
+
+</html>

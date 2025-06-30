@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CF Problem Tracker - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='results.css') }}">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>
+                    <i class="fas fa-chart-line"></i>
+                    CF Problem Tracker
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="filter-section" style="max-width: 400px; margin: 40px auto;">
+            <div class="filter-header">
+                <i class="fas fa-user"></i>
+                Enter your Codeforces Handle
+            </div>
+            {% if error %}
+                <p style="color: var(--danger-color); margin-bottom: 16px;">{{ error }}</p>
+            {% endif %}
+            <form method="POST" action="{{ url_for('index') }}">
+                <div class="form-group">
+                    <label for="handle">Handle</label>
+                    <input type="text" name="handle" id="handle" class="form-control" required>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 18px;">
+                    <i class="fas fa-search"></i>
+                    Fetch Problems
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
