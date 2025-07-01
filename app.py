@@ -6,6 +6,8 @@ import json
 import os
 from datetime import datetime, timedelta
 from collections import defaultdict
+import random
+from collections import defaultdict
 
 app = Flask(__name__)
 app.secret_key = 'cf-tracker-secret-key'
@@ -73,6 +75,112 @@ def get_rank_color(rank):
         'legendary grandmaster': 'legendary-grandmaster'
     }
     return rank_colors.get(rank.lower(), 'unrated')
+
+import random
+from collections import defaultdict
+
+import random
+from collections import defaultdict
+
+def generate_recommendations(handle):
+    problems, error = fetch_submissions(handle)
+    if error or not problems:
+        return []
+
+    solved = {pid: p for pid, p in problems.items() if p['status'] == 'OK'}
+    solved_ratings = [int(p['rating']) for p in solved.values() if isinstance(p['rating'], int)]
+    solved_tags = [tag for p in solved.values() for tag in p['tags'] if tag]
+
+    if not solved_ratings:
+        return []
+
+    avg_rating = sum(solved_ratings) // len(solved_ratings)
+
+    # Count tag frequencies and pick top 5 favorite tags
+    tag_freq = defaultdict(int)
+    for tag in solved_tags:
+        tag_freq[tag] += 1
+    preferred_tags = sorted(tag_freq.items(), key=lambda x: x[1], reverse=True)
+    top_tags = {tag for tag, _ in preferred_tags[:5]}
+
+    # Fetch all problems from CF
+    all_problems_url = "https://codeforces.com/api/problemset.problems"
+    resp = requests.get(all_problems_url)
+    if resp.status_code != 200:
+        return []
+
+    data = resp.json()
+    if data['status'] != 'OK':
+        return []
+
+    all_problems = data['result']['problems']
+
+    # Filtering rules
+    candidates = []
+    for p in all_problems:
+        pid = f"{p['contestId']}-{p['index']}"
+        rating = p.get('rating')
+        tags = p.get('tags', [])
+
+        if pid in solved:
+            continue
+        if not isinstance(rating, int):
+            continue
+        if not (avg_rating - 200 <= rating <= avg_rating + 200):
+            continue
+        if top_tags and not top_tags.intersection(tags):
+            continue
+
+        candidates.append({
+            'name': p['name'],
+            'title': p['name'],
+            'rating': rating,
+            'tags': tags,
+            'url': f"https://codeforces.com/problemset/problem/{p['contestId']}/{p['index']}"
+        })
+
+    # If no candidates with tags, relax tag filter
+    if not candidates:
+        for p in all_problems:
+            pid = f"{p['contestId']}-{p['index']}"
+            rating = p.get('rating')
+
+            if pid in solved or not isinstance(rating, int):
+                continue
+            if avg_rating - 200 <= rating <= avg_rating + 200:
+                candidates.append({
+                    'name': p['name'],
+                    'title': p['name'],
+                    'rating': rating,
+                    'tags': p.get('tags', []),
+                    'url': f"https://codeforces.com/problemset/problem/{p['contestId']}/{p['index']}"
+                })
+
+    # Shuffle candidates to get varied suggestions
+    random.shuffle(candidates)
+
+    # Select top 3 diverse problems based on tags to avoid repetition
+    selected = []
+    used_tags = set()
+    for c in candidates:
+        if len(selected) == 3:
+            break
+        if not used_tags.intersection(set(c['tags'])):
+            selected.append(c)
+            used_tags.update(c['tags'])
+
+    # If less than 3 found by diversity, fill the rest by rating closeness
+    if len(selected) < 3:
+        for c in candidates:
+            if c not in selected:
+                selected.append(c)
+                if len(selected) == 3:
+                    break
+
+    return selected
+
+
+
 
 def calculate_profile_stats(handle):
     """Calculate comprehensive profile statistics"""
@@ -278,10 +386,6 @@ def index():
                                filter_min_rating='', filter_max_rating='')
     return render_template('index.html')
 
-@app.route('/results/<handle>')
-def result(handle):
-    return render_template('results.html', handle=handle)
-
 @app.route('/profile/<handle>')
 def profile(handle):
     # Fetch user basic info
@@ -306,6 +410,8 @@ def profile(handle):
     stats, error = calculate_profile_stats(handle)
     if error:
         stats = {}
+    # Debug: print activity_by_day to server log
+    print('DEBUG: activity_by_day =', stats.get('activity_by_day', {}))
     
     # Format registration date
     if 'registrationTimeSeconds' in user_info:
@@ -330,15 +436,12 @@ def profile(handle):
 
     return render_template('profile.html', handle=handle, user_info=user_info, stats=stats, activity_json=activity_json)
 
-@app.route('/results', methods=['GET', 'POST'])
-def results():
-    handle = session.get('handle') or request.args.get('handle')
-    if not handle:
-        return redirect(url_for('index'))
-
+@app.route('/results/<handle>')
+def results_with_handle(handle):
     problems, error = fetch_submissions(handle, notes=user_notes)
     if error:
         return render_template('index.html', error=error)
+
     # Get user info for results page
     user_url = f"https://codeforces.com/api/user.info?handles={handle}"
     user_resp = requests.get(user_url)
@@ -353,12 +456,10 @@ def results():
     streak_by_day = defaultdict(int)
 
     for pid, info in problems.items():
-        # Rating count
         if info.get('status') == 'OK' and info.get('rating') not in [None, 'N/A']:
             rating = str(info['rating'])
             rating_counts[rating] += 1
 
-        # Streak
         if info.get('status') == 'OK' and info.get('date'):
             try:
                 date = datetime.strptime(info['date'], '%Y-%m-%d').date()
@@ -366,13 +467,14 @@ def results():
             except:
                 pass
 
-    # Sort and convert to list
     rating_data = sorted([[r, c] for r, c in rating_counts.items()])
     streak_data = sorted([[d, c] for d, c in streak_by_day.items()])
 
     return render_template('results.html', handle=handle, problems=problems,
                            filter_status='', filter_revise='', filter_tags=[],
                            filter_min_rating='', filter_max_rating='')
+
+
 
 @app.route('/submit_notes', methods=['POST'])
 def submit_notes():
@@ -388,7 +490,8 @@ def submit_notes():
             elif pid in user_notes:
                 user_notes.pop(pid)
     save_notes()
-    return redirect(url_for('results'))  # This is the POST /results route that reloads problems
+    return redirect(url_for('results_with_handle', handle=handle))  # ✅ Corrected route
+
 
 
 @app.route('/filter', methods=['POST'])
@@ -477,7 +580,13 @@ def profile_chart_data(handle):
     stats, error = calculate_profile_stats(handle)
     if error:
         return {'error': error}, 400
-    return stats
+    return 
+
+@app.route('/suggestions/<handle>')
+def suggestions(handle):
+    suggestions = generate_recommendations(handle)  # This function must exist
+    return render_template('suggestions.html', handle=handle, suggestions=suggestions)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='results.css') }}">
-    
+
 </head>
 
 <body>
@@ -20,8 +20,11 @@
                     CF Problem Tracker
                 </h1>
                 <div class="user-badge">
-                   <button onclick="window.location.href='{{ url_for('profile', handle=handle) }}'">Go to Profile</button>
-                    <i class="fas fa-user"></i> {{ handle }}
+                    <i class="fas fa-user"></i>
+                    <a href="{{ url_for('profile', handle=handle) }}"
+                        style="color: white; font-weight: bold; text-decoration: none;">
+                        {{ handle }}
+                    </a>
                 </div>
             </div>
         </div>
@@ -90,6 +93,13 @@
                     Apply Filters
                 </button>
             </form>
+        </div>
+
+        <!-- AI Suggestions Button -->
+        <div style="text-align: right; margin-bottom: 15px;">
+            <a href="{{ url_for('suggestions', handle=handle) }}" class="btn btn-primary my-3">
+                <i class="fas fa-robot"></i> View AI Suggestions
+            </a>
         </div>
 
         <!-- Table Section -->
@@ -166,7 +176,7 @@
                                 </td>
                                 <td>
                                     <div class="tags-container">
-                                            {% for tag in info.tags if tag %}
+                                        {% for tag in info.tags if tag %}
                                         <span class="tag">{{ tag }}</span>
                                         {% endfor %}
                                     </div>
@@ -203,10 +213,10 @@
 
                     <div class="save-button-container">
                         <button type="submit" class="btn-primary">
-                        <i class="fas fa-save"></i>
-                        Save Notes & Settings
-                    </button>
-                </div>
+                            <i class="fas fa-save"></i>
+                            Save Notes & Settings
+                        </button>
+                    </div>
             </form>
         </div>
     </div>
