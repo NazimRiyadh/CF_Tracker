@@ -20,10 +20,8 @@
                     CF Problem Tracker
                 </h1>
                 <div class="user-badge">
-                    <i class="fas fa-user"></i>
-                    <a href="{{ url_for('profile', handle=handle) }}"
-                        style="color: white; font-weight: bold; text-decoration: none;">
-                        {{ handle }}
+                    <a href="{{ url_for('profile', handle=handle) }}" class="profile-button">
+                        <i class="fas fa-user"></i> {{ handle }}
                     </a>
                 </div>
             </div>
@@ -78,8 +76,8 @@
                         'constructive algorithms', 'binary search', 'trees', 'sortings'] %}
                         {% for tag in all_tags %}
                         <div class="checkbox-wrapper">
-                            <input type="checkbox" name="filter_tags[]" value="{{ tag }}" id="tag_{{ loop.index }}" {% if
-                                filter_tags and tag in filter_tags %}checked{% endif %}>
+                            <input type="checkbox" name="filter_tags[]" value="{{ tag }}" id="tag_{{ loop.index }}" {%
+                                if filter_tags and tag in filter_tags %}checked{% endif %}>
                             <label for="tag_{{ loop.index }}">{{ tag }}</label>
                         </div>
                         {% endfor %}
