@@ -330,15 +330,15 @@ def profile(handle):
 
     return render_template('profile.html', handle=handle, user_info=user_info, stats=stats, activity_json=activity_json)
 
-@app.route('/results', methods=['POST'])
+@app.route('/results', methods=['GET', 'POST'])
 def results():
-    handle = request.form['handle']
-    session['handle'] = handle
+    handle = session.get('handle') or request.args.get('handle')
+    if not handle:
+        return redirect(url_for('index'))
 
     problems, error = fetch_submissions(handle, notes=user_notes)
     if error:
         return render_template('index.html', error=error)
-
     # Get user info for results page
     user_url = f"https://codeforces.com/api/user.info?handles={handle}"
     user_resp = requests.get(user_url)
@@ -370,16 +370,9 @@ def results():
     rating_data = sorted([[r, c] for r, c in rating_counts.items()])
     streak_data = sorted([[d, c] for d, c in streak_by_day.items()])
 
-    return render_template(
-        'results.html',
-        handle=handle,
-        problems=problems,
-        user_info=user_info,
-        rating_data=rating_data,
-        streak_data=streak_data,
-        filter_status='', filter_revise='', filter_tags=[],
-        filter_min_rating='', filter_max_rating=''
-    )
+    return render_template('results.html', handle=handle, problems=problems,
+                           filter_status='', filter_revise='', filter_tags=[],
+                           filter_min_rating='', filter_max_rating='')
 
 @app.route('/submit_notes', methods=['POST'])
 def submit_notes():
@@ -395,7 +388,8 @@ def submit_notes():
             elif pid in user_notes:
                 user_notes.pop(pid)
     save_notes()
-    return redirect(url_for('results', handle=handle))
+    return redirect(url_for('results'))  # This is the POST /results route that reloads problems
+
 
 @app.route('/filter', methods=['POST'])
 def filter_problems():

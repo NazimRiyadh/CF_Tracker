@@ -1,13 +1,41 @@
 {
     "26-A": {
         "note": "ami pari na eta!",
-        "revise": false
+        "revise": true
     },
     "1624-A": {
         "note": "",
         "revise": true
     },
     "486-A": {
+        "note": "",
+        "revise": true
+    },
+    "2118-F": {
+        "note": "",
+        "revise": true
+    },
+    "2118-E": {
+        "note": "",
+        "revise": true
+    },
+    "2118-D1": {
+        "note": "",
+        "revise": true
+    },
+    "1624-B": {
+        "note": "ki obostha!",
+        "revise": true
+    },
+    "1374-B": {
+        "note": "hey!",
+        "revise": true
+    },
+    "1666-D": {
+        "note": "",
+        "revise": true
+    },
+    "1675-B": {
         "note": "",
         "revise": true
     }

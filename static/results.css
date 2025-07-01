@@ -405,3 +405,9 @@
             opacity: 0.6;
             pointer-events: none;
         }
+        .save-button-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        }
