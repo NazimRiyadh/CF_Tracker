@@ -1,106 +1,228 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CF Problem Tracker - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="animated-bg">
-        <div class="code-particle" style="--delay: 0s; --duration: 20s;">{</div>
-        <div class="code-particle" style="--delay: 2s; --duration: 25s;">}</div>
-        <div class="code-particle" style="--delay: 4s; --duration: 30s;">;</div>
-        <div class="code-particle" style="--delay: 6s; --duration: 22s;">if</div>
-        <div class="code-particle" style="--delay: 8s; --duration: 28s;">for</div>
-        <div class="code-particle" style="--delay: 10s; --duration: 24s;">&&</div>
-        <div class="code-particle" style="--delay: 12s; --duration: 26s;">==</div>
-        <div class="code-particle" style="--delay: 14s; --duration: 23s;">[]</div>
-        <div class="code-particle" style="--delay: 16s; --duration: 27s;">()</div>
-        <div class="code-particle" style="--delay: 18s; --duration: 21s;">++</div>
+    <!-- Competitive Programming Background Animation -->
+    <div class="bg-animation">
+        <!-- Floating code snippets -->
+        <div class="code-float" style="--delay: 0s; --duration: 25s; --drift: 50px; left: 5%;">for(int i=0; i&lt;n; i++)</div>
+        <div class="code-float" style="--delay: 3s; --duration: 30s; --drift: -30px; left: 15%;">vector&lt;int&gt; v(n);</div>
+        <div class="code-float" style="--delay: 6s; --duration: 28s; --drift: 70px; left: 25%;">sort(arr, arr+n);</div>
+        <div class="code-float" style="--delay: 9s; --duration: 32s; --drift: -20px; left: 35%;">dp[i][j] = max(dp[i-1][j], dp[i][j-1]);</div>
+        <div class="code-float" style="--delay: 12s; --duration: 26s; --drift: 40px; left: 45%;">while(l &lt; r)</div>
+        <div class="code-float" style="--delay: 15s; --duration: 29s; --drift: -60px; left: 55%;">if(graph[u][v] == 1)</div>
+        <div class="code-float" style="--delay: 18s; --duration: 31s; --drift: 20px; left: 65%;">ans = (ans * base) % mod;</div>
+        <div class="code-float" style="--delay: 21s; --duration: 27s; --drift: -40px; left: 75%;">queue&lt;pair&lt;int,int&gt;&gt; q;</div>
+        <div class="code-float" style="--delay: 24s; --duration: 33s; --drift: 60px; left: 85%;">return gcd(a, b);</div>
+        <div class="code-float" style="--delay: 2s; --duration: 24s; --drift: -50px; left: 95%;">cout &lt;&lt; result &lt;&lt; endl;</div>
+
+        <!-- Binary rain -->
+        <div class="binary-rain" style="--delay: 0s; --duration: 15s; left: 8%;">1</div>
+        <div class="binary-rain" style="--delay: 1s; --duration: 18s; left: 18%;">0</div>
+        <div class="binary-rain" style="--delay: 2s; --duration: 16s; left: 28%;">1</div>
+        <div class="binary-rain" style="--delay: 3s; --duration: 19s; left: 38%;">1</div>
+        <div class="binary-rain" style="--delay: 4s; --duration: 17s; left: 48%;">0</div>
+        <div class="binary-rain" style="--delay: 5s; --duration: 20s; left: 58%;">1</div>
+        <div class="binary-rain" style="--delay: 6s; --duration: 14s; left: 68%;">0</div>
+        <div class="binary-rain" style="--delay: 7s; --duration: 21s; left: 78%;">1</div>
+        <div class="binary-rain" style="--delay: 8s; --duration: 16s; left: 88%;">0</div>
+
+        <!-- Algorithm complexity indicators -->
+        <div class="complexity-indicator" style="--delay: 0s; --duration: 8s; top: 15%; left: 12%;">O(n²)</div>
+        <div class="complexity-indicator" style="--delay: 2s; --duration: 10s; top: 25%; left: 82%;">O(log n)</div>
+        <div class="complexity-indicator" style="--delay: 4s; --duration: 9s; top: 45%; left: 8%;">O(n log n)</div>
+        <div class="complexity-indicator" style="--delay: 6s; --duration: 11s; top: 65%; left: 88%;">O(1)</div>
+        <div class="complexity-indicator" style="--delay: 1s; --duration: 7s; top: 75%; left: 15%;">O(2ⁿ)</div>
+        <div class="complexity-indicator" style="--delay: 3s; --duration: 12s; top: 85%; left: 75%;">O(n³)</div>
+
+        <!-- Contest rating orbs -->
+        <div class="rating-orb newbie" style="--delay: 0s; --duration: 6s; top: 20%; left: 20%;"></div>
+        <div class="rating-orb pupil" style="--delay: 1s; --duration: 7s; top: 30%; left: 70%;"></div>
+        <div class="rating-orb specialist" style="--delay: 2s; --duration: 8s; top: 50%; left: 10%;"></div>
+        <div class="rating-orb expert" style="--delay: 3s; --duration: 6s; top: 60%; left: 85%;"></div>
+        <div class="rating-orb candidate-master" style="--delay: 4s; --duration: 9s; top: 80%; left: 25%;"></div>
+        <div class="rating-orb master" style="--delay: 5s; --duration: 7s; top: 40%; left: 90%;"></div>
+        <div class="rating-orb grandmaster" style="--delay: 6s; --duration: 8s; top: 70%; left: 60%;"></div>
+
+        <!-- Data structure nodes -->
+        <div class="ds-node" style="--delay: 0s; --duration: 10s; top: 18%; left: 25%;"></div>
+        <div class="ds-node" style="--delay: 2s; --duration: 12s; top: 35%; left: 15%;"></div>
+        <div class="ds-node" style="--delay: 4s; --duration: 11s; top: 55%; left: 80%;"></div>
+        <div class="ds-node" style="--delay: 6s; --duration: 9s; top: 72%; left: 40%;"></div>
+        <div class="ds-node" style="--delay: 8s; --duration: 13s; top: 88%; left: 70%;"></div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-container">
-        <div class="hero-section">
-            <div class="hero-content">
-                <div class="logo-container">
-                    <div class="logo-icon">
-                        <i class="fas fa-code"></i>
-                        <div class="logo-pulse"></div>
-                    </div>
-                    <h1 class="hero-title">
-                        <span class="typing-text">CF Problem Tracker</span>
-                        <span class="cursor">|</span>
-                    </h1>
-                </div>
-                
-                <p class="hero-subtitle">
-                    Track your Codeforces journey with style
-                </p>
+    <!-- Floating shapes -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
 
-                <div class="login-card">
-                    <div class="card-header">
-                        <i class="fas fa-user-circle"></i>
-                        <span>Enter your Handle</span>
+    <!-- Main content -->
+    <div class="container">
+        <div class="main-card">
+            <div class="header">
+                <div class="logo">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h1 class="title">CF Problem Tracker</h1>
+                <p class="subtitle">Track your competitive programming journey</p>
+            </div>
+
+            <div id="error" class="error" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="error-text"></span>
+            </div>
+
+            <form class="form" id="loginForm" method="POST">
+                <div class="input-group">
+                    <label for="handle" class="input-label">Codeforces Handle</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="handle" 
+                            name="handle" 
+                            class="input" 
+                            placeholder="Enter your handle"
+                            required
+                            autocomplete="username"
+                        >
+                        <i class="fas fa-user input-icon"></i>
                     </div>
-                    
-                    {% if error %}
-                        <div class="error-message">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            {{ error }}
-                        </div>
-                    {% endif %}
-                    
-                    <form method="POST" action="{{ url_for('index') }}" class="login-form">
-                        <div class="input-group">
-                            <div class="input-wrapper">
-                                <i class="fas fa-at input-icon"></i>
-                                <input type="text" name="handle" id="handle" class="modern-input" 
-                                       placeholder="Your Codeforces handle" required>
-                                <div class="input-border"></div>
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="submit-btn">
-                            <span class="btn-text">Start Tracking</span>
-                            <i class="fas fa-rocket btn-icon"></i>
-                            <div class="btn-ripple"></div>
-                        </button>
-                    </form>
                 </div>
 
-                <div class="features-preview">
-                    <div class="feature-item">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Progress Analytics</span>
+                <button type="submit" class="btn" id="submitBtn">
+                    <div class="btn-content">
+                        <span class="btn-text">Start Tracking</span>
+                        <i class="fas fa-arrow-right"></i>
                     </div>
-                    <div class="feature-item">
-                        <i class="fas fa-trophy"></i>
-                        <span>Rating Tracker</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-fire"></i>
-                        <span>Streak Counter</span>
-                    </div>
+                </button>
+            </form>
+
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-trophy"></i>
+                    <span>Rankings</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-fire"></i>
+                    <span>Streaks</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Floating Elements -->
-    <div class="floating-elements">
-        <div class="floating-icon" style="--delay: 0s; --duration: 15s;">
-            <i class="fas fa-laptop-code"></i>
-        </div>
-        <div class="floating-icon" style="--delay: 5s; --duration: 20s;">
-            <i class="fas fa-bug"></i>
-        </div>
-        <div class="floating-icon" style="--delay: 10s; --duration: 18s;">
-            <i class="fas fa-cog"></i>
-        </div>
-    </div>
+    <script>
+        // Form handling with loading state
+        const form = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorDiv = document.getElementById('error');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const handle = document.getElementById('handle').value.trim();
+            
+            if (!handle) {
+                showError('Please enter your Codeforces handle');
+                return;
+            }
+
+            // Show loading state
+            submitBtn.classList.add('loading');
+            
+            // Simulate form submission (replace with actual logic)
+            setTimeout(() => {
+                // Reset loading state
+                submitBtn.classList.remove('loading');
+                
+                // Here you would typically submit to your backend
+                console.log('Submitting handle:', handle);
+                
+                // For demo purposes, show success
+                showSuccess();
+            }, 2000);
+        });
+
+        function showError(message) {
+            document.getElementById('error-text').textContent = message;
+            errorDiv.style.display = 'flex';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess() {
+            const handle = document.getElementById('handle').value.trim();
+            window.location.href = `/results/${handle}`;
+        }   
+
+        // Enhanced input interactions
+        const inputs = document.querySelectorAll('.input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.style.transition = 'transform 0.2s ease';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add ripple effect to button
+        submitBtn.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple 0.6s ease-out;
+                pointer-events: none;
+            `;
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+
+        // Add ripple animation to CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>

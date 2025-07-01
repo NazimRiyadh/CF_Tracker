@@ -494,9 +494,8 @@ def submit_notes():
 
 
 
-@app.route('/filter', methods=['POST'])
-def filter_problems():
-    handle = session.get('handle')
+@app.route('/filter/<handle>', methods=['POST'])
+def filter_problems(handle):
     if not handle:
         return redirect(url_for('index'))
 
@@ -504,7 +503,7 @@ def filter_problems():
     filter_revise = request.form.get('filter_revise', '')
     filter_min_rating = request.form.get('filter_min_rating', '')
     filter_max_rating = request.form.get('filter_max_rating', '')
-    filter_tags = request.form.getlist('filter_tags')
+    filter_tags = request.form.getlist('filter_tags[]')
 
     problems, error = fetch_submissions(handle, notes=user_notes)
     if error or not problems:

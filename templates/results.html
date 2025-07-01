@@ -38,7 +38,7 @@
                 Filter Problems
             </div>
 
-            <form method="POST" action="{{ url_for('filter_problems') }}">
+            <form method="POST" action="{{ url_for('filter_problems', handle=handle) }}">
                 <div class="filter-row">
                     <div class="form-group">
                         <label>Min Rating</label>
@@ -78,7 +78,7 @@
                         'constructive algorithms', 'binary search', 'trees', 'sortings'] %}
                         {% for tag in all_tags %}
                         <div class="checkbox-wrapper">
-                            <input type="checkbox" name="filter_tags" value="{{ tag }}" id="tag_{{ loop.index }}" {% if
+                            <input type="checkbox" name="filter_tags[]" value="{{ tag }}" id="tag_{{ loop.index }}" {% if
                                 filter_tags and tag in filter_tags %}checked{% endif %}>
                             <label for="tag_{{ loop.index }}">{{ tag }}</label>
                         </div>
@@ -224,13 +224,11 @@
     <script>
         // Add loading state to forms
         document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', function () {
-                this.classList.add('loading');
-                const submitBtn = this.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                    submitBtn.disabled = true;
+            form.addEventListener('submit', function (e) {
+                const btn = this.querySelector('button[type="submit"]:not([disabled])');
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    btn.disabled = true;
                 }
             });
         });
