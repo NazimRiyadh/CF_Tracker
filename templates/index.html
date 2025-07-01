@@ -1,41 +1,105 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>CF Problem Tracker - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='results.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 </head>
 <body>
-    <div class="header">
-        <div class="container">
-            <div class="header-content">
-                <h1>
-                    <i class="fas fa-chart-line"></i>
-                    CF Problem Tracker
-                </h1>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="code-particle" style="--delay: 0s; --duration: 20s;">{</div>
+        <div class="code-particle" style="--delay: 2s; --duration: 25s;">}</div>
+        <div class="code-particle" style="--delay: 4s; --duration: 30s;">;</div>
+        <div class="code-particle" style="--delay: 6s; --duration: 22s;">if</div>
+        <div class="code-particle" style="--delay: 8s; --duration: 28s;">for</div>
+        <div class="code-particle" style="--delay: 10s; --duration: 24s;">&&</div>
+        <div class="code-particle" style="--delay: 12s; --duration: 26s;">==</div>
+        <div class="code-particle" style="--delay: 14s; --duration: 23s;">[]</div>
+        <div class="code-particle" style="--delay: 16s; --duration: 27s;">()</div>
+        <div class="code-particle" style="--delay: 18s; --duration: 21s;">++</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i class="fas fa-code"></i>
+                        <div class="logo-pulse"></div>
+                    </div>
+                    <h1 class="hero-title">
+                        <span class="typing-text">CF Problem Tracker</span>
+                        <span class="cursor">|</span>
+                    </h1>
+                </div>
+                
+                <p class="hero-subtitle">
+                    Track your Codeforces journey with style
+                </p>
+
+                <div class="login-card">
+                    <div class="card-header">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Enter your Handle</span>
+                    </div>
+                    
+                    {% if error %}
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{ error }}
+                        </div>
+                    {% endif %}
+                    
+                    <form method="POST" action="{{ url_for('index') }}" class="login-form">
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <i class="fas fa-at input-icon"></i>
+                                <input type="text" name="handle" id="handle" class="modern-input" 
+                                       placeholder="Your Codeforces handle" required>
+                                <div class="input-border"></div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">
+                            <span class="btn-text">Start Tracking</span>
+                            <i class="fas fa-rocket btn-icon"></i>
+                            <div class="btn-ripple"></div>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="features-preview">
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Progress Analytics</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-trophy"></i>
+                        <span>Rating Tracker</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-fire"></i>
+                        <span>Streak Counter</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="filter-section" style="max-width: 400px; margin: 40px auto;">
-            <div class="filter-header">
-                <i class="fas fa-user"></i>
-                Enter your Codeforces Handle
-            </div>
-            {% if error %}
-                <p style="color: var(--danger-color); margin-bottom: 16px;">{{ error }}</p>
-            {% endif %}
-            <form method="POST" action="{{ url_for('index') }}">
-                <div class="form-group">
-                    <label for="handle">Handle</label>
-                    <input type="text" name="handle" id="handle" class="form-control" required>
-                </div>
-                <button type="submit" class="btn-primary" style="margin-top: 18px;">
-                    <i class="fas fa-search"></i>
-                    Fetch Problems
-                </button>
-            </form>
+
+    <!-- Floating Elements -->
+    <div class="floating-elements">
+        <div class="floating-icon" style="--delay: 0s; --duration: 15s;">
+            <i class="fas fa-laptop-code"></i>
+        </div>
+        <div class="floating-icon" style="--delay: 5s; --duration: 20s;">
+            <i class="fas fa-bug"></i>
+        </div>
+        <div class="floating-icon" style="--delay: 10s; --duration: 18s;">
+            <i class="fas fa-cog"></i>
         </div>
     </div>
 </body>
